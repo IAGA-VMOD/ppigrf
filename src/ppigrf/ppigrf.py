@@ -77,7 +77,7 @@ import pandas as pd
 import os
 
 basepath = os.path.dirname(__file__)
-shc_fn = basepath + '/IGRF13.shc' # Default shc file
+shc_fn = basepath + '/IGRF14.shc' # Default shc file
 shc_fn_igrf13 = basepath + '/IGRF13.shc'
 shc_fn_igrf14 = basepath + '/IGRF14.shc'
 
