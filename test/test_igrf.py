@@ -10,7 +10,7 @@ from pathlib import Path
 from datetime import datetime
 
 from ppigrf import igrf
-from ppigrf.ppigrf import yearfrac_to_datetime, shc_fn, shc_fn_igrf13
+from ppigrf.ppigrf import yearfrac_to_datetime, shc_fn, shc_fn_igrf13, shc_fn_igrf14
 
 # Define paths to test directory and test data directory
 TEST_DIR = Path(os.path.dirname(__file__))
@@ -61,13 +61,15 @@ class TestIGRFKnownValues:
         "date, subdirectory, igrf_version, atol",
         [
             [datetime(2010, 1, 1), "dgrf-2010-01-01", shc_fn_igrf13, 1],
+            [datetime(2010, 1, 1), "dgrf-2010-01-01", shc_fn_igrf14, 1],
             [datetime(2020, 1, 1), "igrf13-2020-01-01", shc_fn_igrf13, 1],
             [datetime(2022, 10, 5), "igrf13-2022-10-05", shc_fn_igrf13, 4],
         ],
         ids=[
-            "IGRF-13: dgrf-2017-10-05",
-            "IGRF-13: 2020-01-01",
-            "IGRF-13: 2022-10-05"
+            "IGRF-13: dgrf-2010-01-01",
+            "IGRF-14: dgrf-2010-01-01",
+            "IGRF-13: igrf13-2020-01-01",
+            "IGRF-13: igrf13-2022-10-05",
         ],
     )
     def test_igrf(self, date, subdirectory, igrf_version, atol):
