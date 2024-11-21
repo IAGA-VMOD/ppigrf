@@ -10,25 +10,20 @@ from pathlib import Path
 from datetime import datetime
 
 from ppigrf import igrf
-from ppigrf.ppigrf import yearfrac_to_datetime
+from ppigrf.ppigrf import yearfrac_to_datetime, shc_fn, shc_fn_igrf13
 
 # Define paths to test directory and test data directory
 TEST_DIR = Path(os.path.dirname(__file__))
 TEST_DATA_DIR = TEST_DIR / "data"
 
 
-def load_precomputed_igrf(date):
+def load_precomputed_igrf(directory):
     """
-    Loads the precomputed IGRF files from a given date
-
-    Available dates:
-        * 2020-01-01
-        * 2022-10-05
+    Loads the precomputed IGRF files from a given directory
 
     Parameters
     ----------
-    date : :class:`datetime.datetime` object
-        Date of the precomputed IGRF field files that will be loaded.
+    directory : :class:`pathlib.Path`
 
     Returns
     -------
@@ -37,13 +32,12 @@ def load_precomputed_igrf(date):
         date.
     """
     # Read the csv files
-    date_dir = TEST_DATA_DIR / date.strftime("%Y-%m-%d")
     first_columns = ["date", "latitude", "longitude", "altitude_km"]
     components = ("b_e", "b_n", "b_z")
     dataframes = []
     for component in components:
         columns = first_columns + [component, component + "_sv"]
-        fname = date_dir / f"{component}.csv"
+        fname = directory / f"{component}.csv"
         df = pd.read_csv(fname, skiprows=13, names=columns)
         dataframes.append(df)
     # Merge the dataframes
@@ -64,11 +58,19 @@ class TestIGRFKnownValues:
     rtol = 1e-2  # 1% of error
 
     @pytest.mark.parametrize(
-        "date, atol",
-        [[datetime(2020, 1, 1), 1], [datetime(2022, 10, 5), 4]],
-        ids=["2020-01-01", "2022-10-05"],
+        "date, subdirectory, igrf_version, atol",
+        [
+            [datetime(2010, 1, 1), "dgrf-2010-01-01", shc_fn_igrf13, 1],
+            [datetime(2020, 1, 1), "igrf13-2020-01-01", shc_fn_igrf13, 1],
+            [datetime(2022, 10, 5), "igrf13-2022-10-05", shc_fn_igrf13, 4],
+        ],
+        ids=[
+            "IGRF-13: dgrf-2017-10-05",
+            "IGRF-13: 2020-01-01",
+            "IGRF-13: 2022-10-05"
+        ],
     )
-    def test_igrf(self, date, atol):
+    def test_igrf(self, date, subdirectory, igrf_version, atol):
         """
         Test IGRF against the precomputed values
 
@@ -79,7 +81,7 @@ class TestIGRFKnownValues:
         differences due to different types of dates interpolations.
         """
         # Get precomputed IGRF field
-        precomputed_igrf = load_precomputed_igrf(date)
+        precomputed_igrf = load_precomputed_igrf(TEST_DATA_DIR/subdirectory)
         # Overwrite the date with the one in the data file
         # date = precomputed_igrf.date.values[0]
         # Compute igrf using ppigrf
@@ -88,6 +90,7 @@ class TestIGRFKnownValues:
             precomputed_igrf.latitude,
             precomputed_igrf.altitude_km,
             date,
+            coeff_fn=igrf_version,
         )
         # Ravel the arrays
         b_e, b_n, b_u = tuple(np.ravel(component) for component in (b_e, b_n, b_u))
