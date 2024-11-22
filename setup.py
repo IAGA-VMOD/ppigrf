@@ -34,7 +34,7 @@ setuptools.setup(
         'pandas>=1.3.5'
     ],
     package_dir={"": "src"},
-    package_data={'':['IGRF13.shc']},
+    package_data={'':['IGRF13.shc', 'IGRF14.shc']},
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.6",
 )
