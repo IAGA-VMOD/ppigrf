@@ -1,9 +1,12 @@
 """
 Test function to compute inclination and declination.
 """
-import pytest
+
+from __future__ import annotations
+
 import numpy as np
 import numpy.testing as npt
+import pytest
 
 from ppigrf import get_inclination_declination
 
