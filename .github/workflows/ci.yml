@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - use-scientific-python-cookie
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
