@@ -2,19 +2,25 @@
 
 [![DOI](https://zenodo.org/badge/352365168.svg)](https://zenodo.org/badge/latestdoi/352365168)
 
-Pure Python code to calculate IGRF model predictions. The IGRF is a model of the Earth's main magnetic field that is updated every 5 years.
+Pure Python code to calculate IGRF model predictions. The IGRF is a model of the
+Earth's main magnetic field that is updated every 5 years.
 
 References:
-- IAGA V-MOD WG and main IGRF website:  
+
+- IAGA V-MOD WG and main IGRF website:
   https://www.ncei.noaa.gov/products/international-geomagnetic-reference-field
 - IGRF-13 (2020):
-    - International Geomagnetic Reference Field: the 13th generation, Alken, P., Thébault, E., Beggan, C.D. et al. International Geomagnetic Reference Field: the thirteenth generation. Earth Planets Space 73, 49 (2021). doi: [10.1186/s40623-020-01288-x](https://doi.org/10.1186/s40623-020-01288-x)
-    - [EPS Special issue detailing contributing models](https://www.springeropen.com/collections/igrf13)
+  - International Geomagnetic Reference Field: the 13th generation, Alken, P.,
+    Thébault, E., Beggan, C.D. et al. International Geomagnetic Reference Field:
+    the thirteenth generation. Earth Planets Space 73, 49 (2021). doi:
+    [10.1186/s40623-020-01288-x](https://doi.org/10.1186/s40623-020-01288-x)
+  - [EPS Special issue detailing contributing models](https://www.springeropen.com/collections/igrf13)
 - IGRF-14 (2025):
-    - International Association of Geomagnetism and Aeronomy. (2024). IGRF-14. Zenodo. https://doi.org/10.5281/zenodo.14012302
-    - (article in progress)
-    - [In progress: EPS Special issue detailing contributing models](https://www.springeropen.com/collections/igrf14)
-    - Evaluation code: https://github.com/IAGA-VMOD/IGRF14eval
+  - International Association of Geomagnetism and Aeronomy. (2024). IGRF-14.
+    Zenodo. https://doi.org/10.5281/zenodo.14012302
+  - (article in progress)
+  - [In progress: EPS Special issue detailing contributing models](https://www.springeropen.com/collections/igrf14)
+  - Evaluation code: https://github.com/IAGA-VMOD/IGRF14eval
 
 **Note that this code now defaults to use IGRF-14**
 
