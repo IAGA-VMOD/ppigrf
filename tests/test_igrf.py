@@ -1,16 +1,20 @@
 """
 Test IGRF field
 """
+
+from __future__ import annotations
+
 import os
-import pytest
+from datetime import datetime
+from pathlib import Path
+
 import numpy as np
 import numpy.testing as npt
 import pandas as pd
-from pathlib import Path
-from datetime import datetime
+import pytest
 
 from ppigrf import igrf
-from ppigrf.ppigrf import yearfrac_to_datetime, shc_fn, shc_fn_igrf13, shc_fn_igrf14
+from ppigrf.ppigrf import shc_fn_igrf13, shc_fn_igrf14, yearfrac_to_datetime
 
 # Define paths to test directory and test data directory
 TEST_DIR = Path(os.path.dirname(__file__))
@@ -83,7 +87,7 @@ class TestIGRFKnownValues:
         differences due to different types of dates interpolations.
         """
         # Get precomputed IGRF field
-        precomputed_igrf = load_precomputed_igrf(TEST_DATA_DIR/subdirectory)
+        precomputed_igrf = load_precomputed_igrf(TEST_DATA_DIR / subdirectory)
         # Overwrite the date with the one in the data file
         # date = precomputed_igrf.date.values[0]
         # Compute igrf using ppigrf

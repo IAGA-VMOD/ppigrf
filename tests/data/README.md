@@ -3,9 +3,8 @@
 ## Precomputed IGRF
 
 Each one of these folders contain a set of `b_e.csv`, `b_n.csv` and `b_z.csv`
-files that host precomputed values of the IGRF field obtained through the [NCEI
-Geomagnetic
-Calculator](https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml)
+files that host precomputed values of the IGRF field obtained through the
+[NCEI Geomagnetic Calculator](https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml)
 provided by [NOAA](https://www.ngdc.noaa.gov).
 
 These values were computed in a regular grid with a spacing of 1 degree in both
@@ -16,7 +15,12 @@ following the `YYYY-MM-DD` format.
 The `b_z.csv` contains the **downward** components of the magnetic vector on
 each location.
 
-Note that each IGRF release includes the DGRF (definitive field) for the previous epoch. IGRF-14 includes the DGRF for 2020.0, overriding the IGRF for 2020.0 issued within IGRF-13. This means that moving from IGRF-13 to IGRF-14 changes the results for calculations within the 2015-2025 period. Calculations within the definitive period (i.e. for IGRF-14 and lower: up to 2015.0) should remain the same.
+Note that each IGRF release includes the DGRF (definitive field) for the
+previous epoch. IGRF-14 includes the DGRF for 2020.0, overriding the IGRF for
+2020.0 issued within IGRF-13. This means that moving from IGRF-13 to IGRF-14
+changes the results for calculations within the 2015-2025 period. Calculations
+within the definitive period (i.e. for IGRF-14 and lower: up to 2015.0) should
+remain the same.
 
 ```
 Example requests
