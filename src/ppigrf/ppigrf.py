@@ -554,7 +554,7 @@ def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn, lower=1, upper=13):
     return Br.reshape(outshape), Btheta.reshape(outshape), Bphi.reshape(outshape)
 
 
-def igrf(lon, lat, h, date, coeff_fn = shc_fn):
+def igrf(lon, lat, h, date, coeff_fn = shc_fn, lower=1, upper=13):
     """
     Calculate IGRF model components
 
@@ -579,6 +579,10 @@ def igrf(lon, lat, h, date, coeff_fn = shc_fn):
         one or more dates to evaluate IGRF coefficients
     coeff_fn : string, optional
         filename of .shc file. Default is latest IGRF
+    lower : int, optional
+        lowest degree of expansion, lower >= 1
+    upper : int, optional
+        highest degree of expansion, 1 <= upper <= 13
 
     Return
     ------
@@ -592,6 +596,11 @@ def igrf(lon, lat, h, date, coeff_fn = shc_fn):
         ellipsoid
     """
 
+    if lower > upper:
+        print('Warning: Highest degree of expansion must be larger or equal to lowest degree.')
+        print('Reset to original range.')
+        lower, upper = 1, 13
+    
     # convert input to arrays and cast to same shape:
     lon, lat, h = np.broadcast_arrays(lon, lat, h)
     shape = lon.shape
@@ -602,7 +611,7 @@ def igrf(lon, lat, h, date, coeff_fn = shc_fn):
     phi = lon
 
     # calculate geocentric components of IGRF:
-    Br, Btheta, Bphi = igrf_gc(r, theta, phi, date, coeff_fn = coeff_fn)
+    Br, Btheta, Bphi = igrf_gc(r, theta, phi, date, coeff_fn = coeff_fn, lower=lower, upper=upper)
     Be = Bphi
 
     # convert output to geodetic
