@@ -442,7 +442,7 @@ def geoc2geod(theta, r, B_th, B_r):
 
 
 
-def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn):
+def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn, lower=1, upper=13):
     """
     Calculate IGRF model components
 
@@ -467,6 +467,10 @@ def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn):
         one or more dates to evaluate IGRF coefficients
     coeff_fn : string, optional
         filename of .shc file. Default is latest IGRF
+    lower : int, optional
+        lowest degree of expansion, lower >= 1
+    upper : int, optional
+        highest degree of expansion, 1 <= upper <= 13
 
     Return
     ------
@@ -490,6 +494,11 @@ def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn):
     if np.any(date > g.index[-1]) or np.any(date < g.index[0]):
         print('Warning: You provided date(s) not covered by coefficient file \n({} to {})'.format(
               g.index[0].date(), g.index[-1].date()))
+
+    if lower > upper:
+        print('Warning: Highest degree of expansion must be larger or equal to lowest degree.')
+        print('Reset to original range.')
+        lower, upper = 1, 13
 
     # get coordinate arrays to same size and shape
     r, theta, phi = np.broadcast_arrays(r, theta, phi)
@@ -524,17 +533,19 @@ def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn):
     # make versions of n and m that are repeated twice
     nn, mm = np.tile(n, 2), np.tile(m, 2)
 
+    N_map = ((nn >= lower) & (nn <= upper)).astype(int)
+
     # calculate Br:
-    G  = (RE / r) ** (nn + 2) * (nn + 1) * np.hstack((P * cosmphi, P * sinmphi))
+    G  = N_map * (RE / r) ** (nn + 2) * (nn + 1) * np.hstack((P * cosmphi, P * sinmphi))
     Br = G.dot(np.hstack((g.values, h.values)).T).T # shape (n_times, n_coords)
 
     # calculate Btheta:
-    G  = -(RE / r) ** (nn + 1) * np.hstack((dP * cosmphi, dP * sinmphi)) \
+    G  = - N_map * (RE / r) ** (nn + 1) * np.hstack((dP * cosmphi, dP * sinmphi)) \
          * RE / r
     Btheta = G.dot(np.hstack((g.values, h.values)).T).T # shape (n_times, n_coords)
 
     # calculate Bphi:
-    G  = -(RE / r) ** (nn + 1) * mm * np.hstack((-P * sinmphi, P * cosmphi)) \
+    G  = - N_map * (RE / r) ** (nn + 1) * mm * np.hstack((-P * sinmphi, P * cosmphi)) \
          * RE / r / np.sin(np.radians(theta))
     Bphi = G.dot(np.hstack((g.values, h.values)).T).T # shape (n_times, n_coords)
 
