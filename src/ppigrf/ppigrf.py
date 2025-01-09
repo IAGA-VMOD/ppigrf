@@ -442,7 +442,7 @@ def geoc2geod(theta, r, B_th, B_r):
 
 
 
-def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn, lower=1, upper=13):
+def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn, min_degree=1, max_degree=13):
     """
     Calculate IGRF model components
 
@@ -467,10 +467,10 @@ def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn, lower=1, upper=13):
         one or more dates to evaluate IGRF coefficients
     coeff_fn : string, optional
         filename of .shc file. Default is latest IGRF
-    lower : int, optional
-        lowest degree of expansion, lower >= 1
-    upper : int, optional
-        highest degree of expansion, 1 <= upper <= 13
+    min_degree : int, optional
+        lowest degree of expansion  min_degree >= 1
+    max_degree : int, optional
+        highest degree of expansion, 1 <= max_degree <= 13
 
     Return
     ------
@@ -495,10 +495,10 @@ def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn, lower=1, upper=13):
         print('Warning: You provided date(s) not covered by coefficient file \n({} to {})'.format(
               g.index[0].date(), g.index[-1].date()))
 
-    if lower > upper:
+    if min_degree > max_degree:
         print('Warning: Highest degree of expansion must be larger or equal to lowest degree.')
         print('Reset to original range.')
-        lower, upper = 1, 13
+        min_degree, max_degree = 1, 13
 
     # get coordinate arrays to same size and shape
     r, theta, phi = np.broadcast_arrays(r, theta, phi)
@@ -533,7 +533,7 @@ def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn, lower=1, upper=13):
     # make versions of n and m that are repeated twice
     nn, mm = np.tile(n, 2), np.tile(m, 2)
 
-    N_map = ((nn >= lower) & (nn <= upper)).astype(int)
+    N_map = ((nn >= min_degree) & (nn <= max_degree)).astype(int)
 
     # calculate Br:
     G  = N_map * (RE / r) ** (nn + 2) * (nn + 1) * np.hstack((P * cosmphi, P * sinmphi))
@@ -554,7 +554,7 @@ def igrf_gc(r, theta, phi, date, coeff_fn = shc_fn, lower=1, upper=13):
     return Br.reshape(outshape), Btheta.reshape(outshape), Bphi.reshape(outshape)
 
 
-def igrf(lon, lat, h, date, coeff_fn = shc_fn, lower=1, upper=13):
+def igrf(lon, lat, h, date, coeff_fn = shc_fn, min_degree=1, max_degree=13):
     """
     Calculate IGRF model components
 
@@ -579,10 +579,10 @@ def igrf(lon, lat, h, date, coeff_fn = shc_fn, lower=1, upper=13):
         one or more dates to evaluate IGRF coefficients
     coeff_fn : string, optional
         filename of .shc file. Default is latest IGRF
-    lower : int, optional
-        lowest degree of expansion, lower >= 1
-    upper : int, optional
-        highest degree of expansion, 1 <= upper <= 13
+    min_degree : int, optional
+        lowest degree of expansion, min_degree >= 1
+    max_degree : int, optional
+        highest degree of expansion, 1 <= max_degree <= 13
 
     Return
     ------
@@ -596,10 +596,10 @@ def igrf(lon, lat, h, date, coeff_fn = shc_fn, lower=1, upper=13):
         ellipsoid
     """
 
-    if lower > upper:
+    if min_degree > max_degree:
         print('Warning: Highest degree of expansion must be larger or equal to lowest degree.')
         print('Reset to original range.')
-        lower, upper = 1, 13
+        min_degree, max_degree = 1, 13
     
     # convert input to arrays and cast to same shape:
     lon, lat, h = np.broadcast_arrays(lon, lat, h)
@@ -611,7 +611,7 @@ def igrf(lon, lat, h, date, coeff_fn = shc_fn, lower=1, upper=13):
     phi = lon
 
     # calculate geocentric components of IGRF:
-    Br, Btheta, Bphi = igrf_gc(r, theta, phi, date, coeff_fn = coeff_fn, lower=lower, upper=upper)
+    Br, Btheta, Bphi = igrf_gc(r, theta, phi, date, coeff_fn = coeff_fn, min_degree=min_degree, max_degree=max_degree)
     Be = Bphi
 
     # convert output to geodetic
@@ -622,7 +622,7 @@ def igrf(lon, lat, h, date, coeff_fn = shc_fn, lower=1, upper=13):
     return Be.reshape(outshape), Bn.reshape(outshape), Bu.reshape(outshape)
 
 
-def igrf_V(r, theta, phi, date, coeff_fn = shc_fn):
+def igrf_V(r, theta, phi, date, coeff_fn = shc_fn, min_degree=1, max_degree=13):
     """
     Calculate IGRF magnetic potential
 
@@ -647,12 +647,22 @@ def igrf_V(r, theta, phi, date, coeff_fn = shc_fn):
         one or more dates to evaluate IGRF coefficients
     coeff_fn : string, optional
         filename of .shc file. Default is latest IGRF
+    min_degree : int, optional
+        lowest degree of expansion, min_degree >= 1
+    max_degree : int, optional
+        highest degree of expansion, 1 <= max_degree <= 13
+
 
     Return
     ------
     V : array
         Magnetic potential (unit nT * km)
     """
+
+    if min_degree > max_degree:
+        print('Warning: Highest degree of expansion must be larger or equal to lowest degree.')
+        print('Reset to original range.')
+        min_degree, max_degree = 1, 13
 
     # read coefficient file:
     g, h = read_shc(coeff_fn)
@@ -698,8 +708,10 @@ def igrf_V(r, theta, phi, date, coeff_fn = shc_fn):
     # make versions of n and m that are repeated twice
     nn, mm = np.tile(n, 2), np.tile(m, 2)
 
+    N_map = ((nn >= min_degree) & (nn <= max_degree)).astype(int)
+
     # calculate Br:
-    G  = RE * (RE / r) ** (nn + 1) * np.hstack((P * cosmphi, P * sinmphi))
+    G  = N_map * RE * (RE / r) ** (nn + 1) * np.hstack((P * cosmphi, P * sinmphi))
     V = G.dot(np.hstack((g.values, h.values)).T).T # shape (n_times, n_coords)
 
     # reshape and return
