@@ -1,0 +1,13 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 2024.08.19
+_src_path: gh:scientific-python/cookie
+backend: hatch
+email: ashley.smith@ed.ac.uk
+full_name: Ashley Smith
+license: MIT
+org: IAGA-VMOD
+project_name: ppigrf
+project_short_description: 'Pure Python IGRF (International Geomagnetic Reference
+    Field) '
+url: https://github.com/IAGA-VMOD/ppigrf
+vcs: true
