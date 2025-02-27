@@ -19,6 +19,12 @@ from ppigrf import get_inclination_declination
         [(1, 1, -np.sqrt(2)), 45, 45],
         [(1, 1, np.sqrt(2)), -45, 45],
         [(-2_938.0, 16_308.1, -52_741.9), 72.5582, -10.2126],
+        [(np.array([0, 0, 1, -1, 1, 1, -2_938.0]),
+          np.array([0, 0, 1, 1, 1, 1, 16_308.1]),
+          np.array([-1, 1, 0, 0, -np.sqrt(2), np.sqrt(2), -52_741.9])),
+          np.array([90, -90, 0, 0, 45, -45, 72.5582]),
+          np.array([0, 0, 45, -45, 45, 45, -10.2126]),
+        ],
     ],
 )
 def test_inclination_declination(degrees, geomagnetic_field, inclination, declination):
