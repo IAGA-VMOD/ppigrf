@@ -763,14 +763,12 @@ def get_inclination_declination(Be, Bn, Bu, degrees=True):
         it's returned in radians.
     """
     # Compute the horizontal component of B
-    horizontal_component = np.sqrt(Be**2 + Bn**2)
-    if horizontal_component == 0:
-        inclination = -np.sign(Bu) * np.pi /2
-        declination = 0
-    else:
-        # Compute the two angles
-        inclination = np.arctan(-Bu / horizontal_component)
-        declination = np.arcsin(Be / horizontal_component)
+    H = np.sqrt(Be**2 + Bn**2)
+    # Compute the inclination and declination, accounting for special H=0 case
+    safe_division = np.divide(-Bu, H, where=H != 0)
+    inclination = np.where(H != 0, np.arctan(safe_division),  -np.sign(Bu) * np.pi /2)
+    safe_division = np.divide(Be, H, where=H != 0)
+    declination = np.where(H != 0, np.arcsin(safe_division), 0)
     # Convert to degrees if needed
     if degrees:
         inclination = np.degrees(inclination)
