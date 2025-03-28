@@ -37,3 +37,11 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/IAGA-VMOD/ppigrf"
+
+[tool.setuptools]
+packages = ["ppigrf"]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.package-data]
+ppigrf = ["*.shc"]
