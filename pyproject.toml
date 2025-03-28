@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ppigrf"
+version = "2.1.0"
+authors = [
+    { name = "Karl Laundal" }
+]
+maintainers = [
+    { name = "Ashley Smith", email = "ashley.smith@ed.ac.uk" },
+]
+license = { file = "LICENSE" }
+description = "Pure Python IGRF"
+readme = "README.md"
+requires-python = ">=3.6"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Development Status :: 4 - Beta",
+]
+dependencies = [
+    "numpy >= 1.15",
+    "pandas >= 1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest"
+]
+
+[project.urls]
+Homepage = "https://github.com/IAGA-VMOD/ppigrf"
+
+[tool.setuptools]
+packages = ["ppigrf"]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.package-data]
+ppigrf = ["*.shc"]
