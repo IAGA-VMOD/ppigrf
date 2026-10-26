@@ -736,7 +736,7 @@ def get_inclination_declination(Be, Bn, Bu, degrees=True):
 
     .. math::
 
-        D = \arcsin \frac{B_e}{\sqrt{B_e^2 + B_n^2}}
+        D = \operatorname{atan2}(B_e, B_n)
 
     Parameters
     ----------
@@ -763,12 +763,11 @@ def get_inclination_declination(Be, Bn, Bu, degrees=True):
         it's returned in radians.
     """
     # Compute the horizontal component of B
-    H = np.sqrt(Be**2 + Bn**2)
+    H = np.hypot(Be, Bn)
     # Compute the inclination and declination, accounting for special H=0 case
     safe_division = np.divide(-Bu, H, where=H != 0)
     inclination = np.where(H != 0, np.arctan(safe_division),  -np.sign(Bu) * np.pi /2)
-    safe_division = np.divide(Be, H, where=H != 0)
-    declination = np.where(H != 0, np.arcsin(safe_division), 0)
+    declination = np.where(H != 0, np.arctan2(Be, Bn), 0)
     # Convert to degrees if needed
     if degrees:
         inclination = np.degrees(inclination)
